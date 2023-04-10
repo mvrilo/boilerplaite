@@ -5,14 +5,14 @@
 ## Usage
 
 ```
-./boilerplaite -h                                                                                                                        (base)
+./boilerplaite -h
 boilerplaite is a package and cli tool to generate boilerplate code from a prompt using openai's chatgpt api.
 
 Usage:
   boilerplaite [flags]
 
 Examples:
-boilerplaite -o ./examples/go-cli-example -p "go program, package main, using cobra, godotenv and envconfig. check all errors."
+boilerplaite -o ./examples/go-cli-example -p "go program, package main, using cobra, check imports and errors"
 
 Flags:
   -h, --help            help for boilerplaite
