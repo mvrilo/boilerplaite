@@ -4,14 +4,11 @@
 
 ## Installation
 
-```
-go install github.com/mvrilo/boilerplaite/cmd/boilerplaite@latest
-```
+`go install github.com/mvrilo/boilerplaite/cmd/boilerplaite@latest`
 
 ## Usage
 
 ```
-boilerplaite -h
 boilerplaite is a package and cli tool to generate boilerplate code from a prompt using openai's chatgpt api.
 
 Usage:
