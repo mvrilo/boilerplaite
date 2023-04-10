@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func main() {
-	godotenv.Load()
+	_ = godotenv.Load()
 
 	var conf Config
 	err := envconfig.Process("boilerplaite", &conf)
