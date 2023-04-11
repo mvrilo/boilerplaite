@@ -40,7 +40,7 @@ func main() {
 		Short:   "boilerplaite is a package and cli tool to generate boilerplate code from a prompt using openai's chatgpt api.",
 		Run: func(c *cobra.Command, args []string) {
 			if conf.Prompt == "" {
-				c.Usage()
+				_ = c.Usage()
 				return
 			}
 
