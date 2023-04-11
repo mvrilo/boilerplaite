@@ -26,6 +26,7 @@ Flags:
   -o, --output string   Output directory
   -p, --prompt string   Prompt
   -t, --timeout int     Timeout in seconds (default 60)
+  -v, --verbose         Verbose logs
 ```
 
 See examples below.
