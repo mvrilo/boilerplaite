@@ -13,18 +13,15 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-const promptTemplate = `You are an AI system called "boilerplaite", your objective is to get me faster in writing code in any programming language, this means generating boilerplate codes. Your answers must be in the format of valid Yaml files only. You will provide the code and the filepath where that code should live, so for a task like this "sample package.json file for a nodejs project" you should return something like this:
+var ErrOutputExists = errors.New("Output directory already exists")
+
+const promptTemplate = `You are an AI system called "boilerplaite", your objective is to get me faster in writing code in any programming language, this means generating boilerplate codes. Your answers must be in the format of yaml/yml and it MUST be valid. Don't add any notes. If a file is empty you may skip it. You will provide the code and the filepath where that code should live, so for a task like this "sample package.json file for a nodejs project" you should return something like this:
 - filepath: ./package.json
   code: |
   {
 	  "name": "sample",
 	  "version": "1.0.0",
-	  "description": "",
 	  "main": "index.js",
-	  "scripts": {
-	  	"test": "echo \"Error: no test specified\" && exit 1"
-	  },
-	  "author": "",
 	  "license": "MIT"
   }
 Another example would be: "2 files as txt with the characters a and b in each file"
@@ -33,7 +30,7 @@ Another example would be: "2 files as txt with the characters a and b in each fi
 	a
 - filepath: ./b.txt
 	code: |
-	a
+	b
 This is your task: %s`
 
 type entry struct {
@@ -52,18 +49,18 @@ func New(openaiKey, openaiModel string) *Boilerplaite {
 	return &Boilerplaite{chatgpt}
 }
 
-func (b *Boilerplaite) Complete(ctx context.Context, data string) (string, error) {
+func (b *Boilerplaite) Complete(ctx context.Context, data string) (string, int, error) {
 	msgs := []*chat.Message{{Role: "user", Content: fmt.Sprintf(promptTemplate, data)}}
 	params := &chat.CreateCompletionParams{Messages: msgs}
 	resp, err := b.chatgpt.CreateCompletion(ctx, params)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	replymsg := resp.Choices[0].Message
 	content := replymsg.Content
 
-	return content, nil
+	return content, resp.Usage.TotalTokens, nil
 }
 
 func (b *Boilerplaite) Save(ctx context.Context, outdir string, data string) error {
@@ -73,7 +70,7 @@ func (b *Boilerplaite) Save(ctx context.Context, outdir string, data string) err
 	}
 
 	if _, err := os.Stat(outdir); err == os.ErrExist {
-		return errors.New("Output directory already exists")
+		return ErrOutputExists
 	}
 
 	for _, entry := range out {
@@ -84,15 +81,18 @@ func (b *Boilerplaite) Save(ctx context.Context, outdir string, data string) err
 			return err
 		}
 
-		println(file)
 		f, err := os.Create(file)
 		if err != nil {
-			os.RemoveAll(outdir)
+			if err := os.RemoveAll(outdir); err != nil {
+				return err
+			}
 			return err
 		}
 
-		_, err = f.WriteString(entry.Code)
-		if err != nil {
+		if _, err = f.WriteString(entry.Code); err != nil {
+			if err := os.Remove(file); err != nil {
+				return err
+			}
 			return err
 		}
 	}

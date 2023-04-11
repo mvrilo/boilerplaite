@@ -1,6 +1,9 @@
 # boilerplaite
 
-`boilerplaite` is a command line tool and library to generate boilerplate code from a prompt using openai's chatgpt api.
+[![GoDoc](https://godoc.org/github.com/mvrilo/boilerplaite?status.svg)](https://godoc.org/github.com/mvrilo/boilerplaite)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mvrilo/boilerplaite)](https://goreportcard.com/report/github.com/mvrilo/boilerplaite)
+
+`boilerplaite` is a command-line tool and library to generate boilerplate code from a prompt using openai's chatgpt api.
 
 ## Installation
 
@@ -15,13 +18,14 @@ Usage:
   boilerplaite [flags]
 
 Examples:
-boilerplaite -o ./examples/go-cli-example -p "go program, package main, using cobra, check imports and errors"
+boilerplaite -o ./examples/go-cli-example -p "go program, package main, using cobra"
 
 Flags:
   -h, --help            help for boilerplaite
   -m, --model string    OpenAI model (default "gpt-3.5-turbo")
   -o, --output string   Output directory
   -p, --prompt string   Prompt
+  -t, --timeout int     Timeout in seconds (default 60)
 ```
 
 See examples below.
@@ -52,4 +56,23 @@ boilerplaite -o ./examples/rust-axum-hello -p "hello world program using rust wi
 ./boilerplaite -o ./examples/sql-users-table -p "sql file containing create table statement for users, insert and update queries, the table should include id, name and email"
 ```
 
-Check the output here: [./examples](./examples).
+- A Python app using flask listening on port 3000.
+
+```
+./boilerplaite -o ./examples/python-flask-hello-world -p "python app using flask, hello world endpoint, listening on port 3000"
+```
+
+- A Ruby app using sinatra, fetchin data from sqlite db, listening on port 5000, with extra files.
+
+```
+./boilerplaite -o ./examples/ruby-sinatra -p "a ruby app using sinatra, fetching some data from a sqlite database, listening on port 5000, with dockerfile, gemspec and bundle files"
+```
+
+Check the output here: [./examples](examples).
+
+## Notes
+
+- Responses may contain innacurate or incorrect data.
+- GPT-3.5-turbo is used as default model.
+- Beware the high costs when changing the model to GPT-4.
+- No overwrites when writing to files.
