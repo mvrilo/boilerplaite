@@ -46,4 +46,10 @@ boilerplaite -o ./examples/go-cli-example -p "go program, package main, using co
 boilerplaite -o ./examples/rust-axum-hello -p "hello world program using rust with axum server and cli with clap"
 ```
 
+- SQL tables and queries
+
+```
+./boilerplaite -o ./examples/sql-users-table -p "sql file containing create table statement for users, insert and update queries, the table should include id, name and email"
+```
+
 Check the output here: [./examples](./examples).
