@@ -5,6 +5,8 @@
 
 `boilerplaite` is a command-line tool and library to generate boilerplate code from a prompt using openai's chatgpt api.
 
+![demo](examples/demo.png)
+
 ## Installation
 
 `go install github.com/mvrilo/boilerplaite/cmd/boilerplaite@latest`
@@ -67,6 +69,12 @@ boilerplaite -o ./examples/rust-axum-hello -p "hello world program using rust wi
 
 ```
 ./boilerplaite -o ./examples/ruby-sinatra -p "a ruby app using sinatra, fetching some data from a sqlite database, listening on port 5000, with dockerfile, gemspec and bundle files"
+```
+
+- A Ruby script for encoding data into sha256 from stdin to stdout
+
+```
+./boilerplaite -o ./examples/ruby-sha256 -p "ruby script for encoding data into sha256 from stdin to stdout"
 ```
 
 Check the output here: [./examples](examples).
