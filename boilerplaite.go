@@ -63,14 +63,36 @@ func (b *Boilerplaite) Complete(ctx context.Context, data string) (string, int, 
 	return content, resp.Usage.TotalTokens, nil
 }
 
-func (b *Boilerplaite) Save(ctx context.Context, outdir string, data string) error {
-	var out []entry
-	if err := yaml.Unmarshal([]byte(data), &out); err != nil {
+func (b *Boilerplaite) prepare(ctx context.Context, outdir string) error {
+	if _, err := os.Stat(outdir); err == os.ErrExist {
+		return ErrOutputExists
+	}
+	return os.MkdirAll(outdir, 0750)
+}
+
+func (b *Boilerplaite) WritePrompt(ctx context.Context, outdir string, data string) error {
+	if err := b.prepare(ctx, outdir); err != nil {
+		return err
+	}
+	filepath := filepath.Join(outdir, ".boilerplaite.prompt")
+	f, err := os.Open(filepath)
+	if err != nil {
+		return err
+	}
+	if _, err = f.Write([]byte(data)); err != nil {
+		return err
+	}
+	return f.Close()
+}
+
+func (b *Boilerplaite) WriteFiles(ctx context.Context, outdir string, data string) error {
+	if err := b.prepare(ctx, outdir); err != nil {
 		return err
 	}
 
-	if _, err := os.Stat(outdir); err == os.ErrExist {
-		return ErrOutputExists
+	var out []entry
+	if err := yaml.Unmarshal([]byte(data), &out); err != nil {
+		return err
 	}
 
 	for _, entry := range out {

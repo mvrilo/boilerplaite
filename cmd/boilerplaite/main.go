@@ -14,12 +14,13 @@ import (
 )
 
 type Config struct {
-	OpenAIKey   string `envconfig:"openai_key"`
-	OpenAIModel string `envconfig:"openai_model"`
-	Output      string `envconfig:"output"`
-	Prompt      string `envconfig:"prompt"`
-	Timeout     int    `envconfig:"timeout"`
-	Verbose     bool   `envconfig:"verbose"`
+	OpenAIKey    string `envconfig:"openai_key"`
+	OpenAIModel  string `envconfig:"openai_model"`
+	Output       string `envconfig:"output"`
+	OutputPrompt bool   `envconfig:"output_prompt"`
+	Prompt       string `envconfig:"prompt"`
+	Timeout      int    `envconfig:"timeout"`
+	Verbose      bool   `envconfig:"verbose"`
 }
 
 func main() {
@@ -65,7 +66,15 @@ func main() {
 
 			if conf.Output != "" {
 				log.Debug("boilerplaite", "output", conf.Output)
-				if err = bp.Save(ctx, conf.Output, data); err != nil {
+				if err = bp.WriteFiles(ctx, conf.Output, data); err != nil {
+					log.Fatal(err)
+				}
+				return
+			}
+
+			if conf.OutputPrompt {
+				log.Debug("boilerplaite", "outputprompt", conf.OutputPrompt)
+				if err = bp.WritePrompt(ctx, conf.Output, data); err != nil {
 					log.Fatal(err)
 				}
 				return
@@ -78,6 +87,7 @@ func main() {
 
 	rootCmd.Flags().StringVarP(&conf.OpenAIModel, "model", "m", "gpt-3.5-turbo", "OpenAI model")
 	rootCmd.Flags().StringVarP(&conf.Output, "output", "o", "", "Output directory")
+	rootCmd.Flags().BoolVarP(&conf.OutputPrompt, "outputprompt", "u", true, "Write prompt string into a file in output directory")
 	rootCmd.Flags().StringVarP(&conf.Prompt, "prompt", "p", "", "Prompt")
 	rootCmd.Flags().IntVarP(&conf.Timeout, "timeout", "t", 60, "Timeout in seconds")
 	rootCmd.Flags().BoolVarP(&conf.Verbose, "verbose", "v", false, "Verbose logs")
